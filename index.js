@@ -12,6 +12,8 @@ app.use(cors());
 app.use(bodyParser.json({limit: '1000mb'}));
 
 const router = express.Router();
+
+
 //Document Datastax
 //GET PRODUCTS 
 app.use('/api/products', async(req, res) => {
@@ -116,6 +118,7 @@ app.use('/api/weather-app', async(req, res) => {
     console.error(error); //error catch
   }
 });
+
 
 
 app.listen(port, () => {
