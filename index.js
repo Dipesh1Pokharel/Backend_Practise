@@ -113,12 +113,9 @@ app.use('/api/weather-app', async(req, res) => {
     // // return await response.json();
 
   }catch(error) {
-    console.error(error);
+    console.error(error); //error catch
   }
 });
-
-
-
 
 
 app.listen(port, () => {
