@@ -3,8 +3,8 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const axios = require('axios');
 const axiosRetry = require('axios-retry');
+// const fetch = require('node-fetch')  ;
 const https = require('https'); 
-
 const app = express();
 const port = 3000;
 
@@ -97,6 +97,28 @@ app.patch('/api/patch-products/:productId', async (req, res) => {
       res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+app.use('/api/weather-app', async(req, res) => {
+  
+  try {
+    // const options = {  method: 'GET',
+    //   headers: {    'key': '1f7566f4399946cd85a231355241202' 
+    // }};
+    //  const response = await axios.get('http://api.weatherapi.com/v1/current.json?q=London&aqi=yes', options);	
+    // const result = await response.json();	
+    // console.log(result);
+    const response = await axios.get('http://api.weatherapi.com/v1/current.json?key=1f7566f4399946cd85a231355241202&q=Toronto&aqi=yes');
+    // console.log(JSON.stringify(response));
+    res.json(response.data);
+
+    // // return await response.json();
+
+  }catch(error) {
+    console.error(error);
+  }
+});
+
+
+
 
 
 app.listen(port, () => {
