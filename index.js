@@ -142,7 +142,7 @@ app.use('/api/weather-app/:city', async(req, res) => {
     // // return await response.json();
 
   }catch(error) {
-    console.error(error); //error catch
+    console.error(error); //error catc
   }
 });
 
