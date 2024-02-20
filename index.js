@@ -14,7 +14,24 @@ app.use(bodyParser.json({limit: '1000mb'}));
 const router = express.Router();
 
 
-//Document Datastax
+//Document Datastax 
+ //GET PRODUCT BY ID
+  app.use('/api/products/:productId', async (req, res)=>{
+    const productId = req.params.productId;
+    try{
+      const response = await axios.get(`https://5473a948-897c-446a-a79c-d9f57e8071e0-us-east1.apps.astra.datastax.com/api/rest/v2/namespaces/document/collections/products/${productId}`,{
+        headers: {
+          'X-Cassandra-Token': 'AstraCS:TjkSeDazlJEbcCMHPUXkKwPn:6454b234535e9d33153d4f70b86f5c5a8ff19331645ecf3453afd0eacdaea026'
+        }
+      });
+      res.status(201).json(response.data);
+    }
+    catch(err){
+      res.status(500).json(err);
+
+
+    }
+  });
 //GET PRODUCTS 
 app.use('/api/products', async(req, res) => {
     try {
@@ -28,6 +45,8 @@ app.use('/api/products', async(req, res) => {
       console.error(error);
     }
   });
+
+
   //ADD PRODUCT
 
   app.use('/api/add-products', async(req, res) => {
@@ -58,7 +77,7 @@ app.use('/api/products', async(req, res) => {
             }
         });
 
-        res.json(response.data);
+        res.status(201).json("Status : Sucess");
     } catch (error) {
         console.error(error);
     }
@@ -112,7 +131,7 @@ app.use('/api/weather-app/:city', async(req, res) => {
     const response = await axios.get(`http://api.weatherapi.com/v1/current.json?key=1f7566f4399946cd85a231355241202&q=${city}&aqi=yes`);
     // console.log(JSON.stringify(response));
     const datas= response.data;
-    res.send(`Name: ${datas.location.name} -
+    res.send(`Name: ${datas.location.name} - 
     Country : ${datas.location.country} -
     Time : ${datas.location.localtime}-
     Condition : ${datas.current.condition.text} -
