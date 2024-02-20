@@ -111,7 +111,14 @@ app.use('/api/weather-app/:city', async(req, res) => {
     // console.log(result);
     const response = await axios.get(`http://api.weatherapi.com/v1/current.json?key=1f7566f4399946cd85a231355241202&q=${city}&aqi=yes`);
     // console.log(JSON.stringify(response));
-    res.json(response.data);
+    const datas= response.data;
+    res.send(`Name: ${datas.location.name} -
+    Country : ${datas.location.country} -
+    Time : ${datas.location.localtime}-
+    Condition : ${datas.current.condition.text} -
+    Temperature in C : ${datas.current.feelslike_c}`);
+
+    // res.send(response.data);
 
     // // return await response.json();
 
