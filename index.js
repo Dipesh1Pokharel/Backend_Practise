@@ -55,23 +55,53 @@ app.use('/api/products', async(req, res) => {
 
 
   //ADD PRODUCT
-
-  app.use('/api/add-products', async(req, res) => {
-    const requestData = req.body;
+  app.post("/api/add-products", upload.single('image'), async (req, res) => {
     try {
+      // Extract product data from request body
+      const productData = req.body;
+      
+      // Extract image buffer from the request file
+      const imageBuffer = req.file.buffer;
+      
+      // Encode image buffer to base64
+      const base64Image = imageBuffer.toString('base64');
+  
+      // Add base64 image to product data
+      productData.image = base64Image;
+  
+      // Send product data to DataStax database
       const response = await axios.post('https://5473a948-897c-446a-a79c-d9f57e8071e0-us-east1.apps.astra.datastax.com/api/rest/v2/namespaces/document/collections/products', 
-      requestData,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Cassandra-Token': 'AstraCS:TjkSeDazlJEbcCMHPUXkKwPn:6454b234535e9d33153d4f70b86f5c5a8ff19331645ecf3453afd0eacdaea026'
-        }
-      });
+        productData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Cassandra-Token': 'AstraCS:TjkSeDazlJEbcCMHPUXkKwPn:6454b234535e9d33153d4f70b86f5c5a8ff19331645ecf3453afd0eacdaea026'
+          }
+        });
+  
       res.json(response.data);
-    }catch(error) {
-      console.error(error);
+    } catch (err) {
+      console.log(err);
+      res.status(500).send('Internal Server Error');
     }
   });
+
+  // app.use('/api/add-products', async(req, res) => {
+  //   const requestData = req.body;
+  //   try {
+  //     const response = await axios.post('https://5473a948-897c-446a-a79c-d9f57e8071e0-us-east1.apps.astra.datastax.com/api/rest/v2/namespaces/document/collections/products', 
+  //     requestData,
+  //     {
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'X-Cassandra-Token': 'AstraCS:TjkSeDazlJEbcCMHPUXkKwPn:6454b234535e9d33153d4f70b86f5c5a8ff19331645ecf3453afd0eacdaea026'
+  //       }
+  //     });
+  //     res.json(response.data);
+  //   }catch(error) {
+  //     console.error(error);
+  //   }
+  // });
   
 //DELETE PRODUCT
   app.delete('/api/del-products/:productId', async (req, res) => {
@@ -156,7 +186,7 @@ app.use('/api/weather-app/:city', async(req, res) => {
     console.error(error); //error catc
   }
 });
-// 
+// upload img with datas
 
 
 //other way to upload image
