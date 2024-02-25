@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const axios = require('axios');
 const axiosRetry = require('axios-retry');
 // const fetch = require('node-fetch')  ;
+const multer = require('multer');
 const https = require('https'); 
 const app = express();
 const port = 3000;
@@ -11,6 +12,11 @@ const port = 3000;
 app.use(cors());
 app.use(bodyParser.json({limit: '1000mb'}));
 
+const storage = multer.memoryStorage();
+const upload =  multer({
+  storge: storage,
+  limits : {fileSize: 10000000000}
+});
 const router = express.Router();
 
 
@@ -150,6 +156,25 @@ app.use('/api/weather-app/:city', async(req, res) => {
     console.error(error); //error catc
   }
 });
+// 
+
+
+//other way to upload image
+app.post("/upload", upload.single('image'), async (req, res) => {
+  try {
+    const imageBuffer = req.file.buffer;
+    const decodeImage = Buffer.from(imageBuffer);
+    const base64Image = decodeImage.toString('base64');
+    res.status(200).send( base64Image );
+  } catch (err) {
+    console.log(err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+
+
 
 
 
