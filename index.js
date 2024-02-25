@@ -14,6 +14,7 @@ app.use(bodyParser.json({limit: '1000mb'}));
 const router = express.Router();
 
 
+
 //Document Datastax 
  //GET PRODUCT BY ID
   app.use('/api/products/:productId', async (req, res)=>{
@@ -131,11 +132,12 @@ app.use('/api/weather-app/:city', async(req, res) => {
     const response = await axios.get(`http://api.weatherapi.com/v1/current.json?key=1f7566f4399946cd85a231355241202&q=${city}&aqi=yes`);
     // console.log(JSON.stringify(response));
     const datas= response.data;
-    res.send(`Name: ${datas.location.name} - 
-    Country : ${datas.location.country} -
-    Time : ${datas.location.localtime}-
-    Condition : ${datas.current.condition.text} -
-    Temperature in C : ${datas.current.feelslike_c}`);
+    // res.send(`Name: ${datas.location.name} - 
+    // Country : ${datas.location.country} -
+    // Time : ${datas.location.localtime}-
+    // Condition : ${datas.current.condition.text} -
+    // Temperature in C : ${datas.current.feelslike_c}`);
+    res.json(datas);
 
     // res.send(response.data);
 
