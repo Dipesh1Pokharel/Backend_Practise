@@ -6,16 +6,17 @@ const axiosRetry = require('axios-retry');
 // const fetch = require('node-fetch')  ;
 const multer = require('multer');
 const https = require('https'); 
+const { Console } = require('console');
 const app = express();
 const port = 3000;
 
 app.use(cors());
-app.use(bodyParser.json({limit: '1000mb'}));
+app.use(bodyParser.json({limit: '1000MB'}));
 
 const storage = multer.memoryStorage();
 const upload =  multer({
   storge: storage,
-  limits : {fileSize: 10000000000}
+  limits : {fileSize: 1000*1024*1024}
 });
 const router = express.Router();
 
@@ -55,7 +56,7 @@ app.use('/api/products', async(req, res) => {
 
 
   //ADD PRODUCT
-  app.post("/api/add-products", upload.single('image'), async (req, res) => {
+  app.post("/api/add-products", upload.single('video'), async (req, res) => {
     try {
       // Extract product data from request body
       const productData = req.body;
@@ -64,10 +65,12 @@ app.use('/api/products', async(req, res) => {
       const imageBuffer = req.file.buffer;
       
       // Encode image buffer to base64
-      const base64Image = imageBuffer.toString('base64');
+      const decodeImage = Buffer.from(imageBuffer);
+      const base64Image = decodeImage.toString('base64');
+      // const base64Image = imageBuffer.toString('base64');
   
       // Add base64 image to product data
-      productData.image = base64Image;
+      productData.video = base64Image;
   
       // Send product data to DataStax database
       const response = await axios.post('https://5473a948-897c-446a-a79c-d9f57e8071e0-us-east1.apps.astra.datastax.com/api/rest/v2/namespaces/document/collections/products', 
@@ -79,7 +82,7 @@ app.use('/api/products', async(req, res) => {
           }
         });
   
-      res.json(response.data);
+      res.send(response.data);
     } catch (err) {
       console.log(err);
       res.status(500).send('Internal Server Error');
@@ -201,6 +204,56 @@ app.post("/upload", upload.single('image'), async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+
+// app.use('/api/events/:query', async (req, res)=>{
+//     try{
+//         const query = req.params.query;
+//         const response= await axios.get(`https://real-time-events-search.p.rapidapi.com/search-events`,
+//         {params: {
+//           query: query,
+//           start: '0'
+//         } },{
+//           headers: {
+//             'X-RapidAPI-Key': 'f8cd9c8bd9msh6e6d921717b0838p13ad61jsnc3c23603d782',
+//             'X-RapidAPI-Host': 'real-time-events-search.p.rapidapi.com'
+//           }
+//         });
+//         res.json(response.data);
+
+
+//     }
+//     catch(err){
+//       console.log(err);
+//     }
+// })
+
+// const axios = require('axios');
+
+app.get('/api/events/:name', async(req, res) => {
+  const name = req.params.name;
+  // console.log(name);
+  const options = {
+    method: 'GET',
+    url: 'https://real-time-events-search.p.rapidapi.com/search-events',
+    params: {
+      query: `Environment Programs in ${name}`,
+      start: '0'
+    },
+    headers: {
+      'X-RapidAPI-Key': 'f8cd9c8bd9msh6e6d921717b0838p13ad61jsnc3c23603d782',
+      'X-RapidAPI-Host': 'real-time-events-search.p.rapidapi.com'
+    }
+  };
+
+  try {
+    const response = await axios.request(options);
+    // console.log(response.data);
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+  }
+})
+
 
 
 
